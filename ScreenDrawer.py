@@ -2,8 +2,6 @@ import cv2
 
 import mediapipe as mp
 import numpy as np
-from scipy.signal import lfilter
-import matplotlib.pyplot as plt
 
 mp_drawing = mp.solutions.drawing_utils
 mp_hands = mp.solutions.hands
