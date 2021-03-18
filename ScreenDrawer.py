@@ -119,7 +119,7 @@ def draw(canvas, color, k, threshold, thickness):
 
 
 
-        # exit when the user presses 's's
+        # exit when the user presses 's'
         if cv2.waitKey(5) & 0xFF == ord('s'):
             break
     hands.close()
