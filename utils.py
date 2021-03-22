@@ -1,4 +1,5 @@
 import cv2
+import math
 def find_sum(list_points,k, axis):
     list_axis = [sub[axis] for sub in list_points]
     
@@ -46,3 +47,8 @@ def draw_circle(cursor, list_avg, radius, color,thickness):
     cv2.circle(cursor,end_point,radius,color,thickness)
     
     return cursor
+def find_distance(index, thumb):
+    distance = (index.x - thumb.x)**2+ (index.y - thumb.y)**2
+    distance = math.sqrt(distance)
+    distance = distance*800
+    return distance

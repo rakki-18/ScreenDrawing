@@ -8,11 +8,33 @@ mp_holistic = mp.solutions.holistic
 holistic =  mp_holistic.Holistic( min_detection_confidence=0.5, min_tracking_confidence=0.5)
 def init():
     count = 0
-    
+
     list_points = []
     list_avg = []
-    
+
     return count, list_points, list_avg
+def distance_to_gesture(distance):
+    if(distance < 50):
+        gesture = 1
+    else:
+        gesture = 0
+    return gesture
+
+def find_gesture(results):
+    if results.right_hand_landmarks:
+        index = results.right_hand_landmarks.landmark[8]
+        thumb  = results.right_hand_landmarks.landmark[4]
+        distance = find_distance(index, thumb)
+        gesture = distance_to_gesture(distance)
+    else:
+        gesture = -1
+
+    return gesture
+
+def execute_gesture(canvas, gesture):
+    if(gesture == 1):
+        canvas = np.zeros([512,512,1],dtype=np.uint8)
+    return canvas
 
 # canvas on which we are drawing
 canvas = np.zeros([512,512,1],dtype=np.uint8)
@@ -28,11 +50,8 @@ def draw(canvas, color, k, threshold, thickness):
             print("video capture unsuccessful.")
             break
 
-        # Flip the image horizontally for a later selfie-view display, and convert
-        # the BGR image to RGB.
+        
         image = cv2.cvtColor(cv2.flip(image, 1), cv2.COLOR_BGR2RGB)
-        # To improve performance, optionally mark the image as not writeable to
-        # pass by reference.
         image.flags.writeable = False
         results = holistic.process(image)
 
@@ -57,10 +76,13 @@ def draw(canvas, color, k, threshold, thickness):
                     
                     canvas = draw_line(canvas,list_avg,color,thickness)
             
-            #mp_drawing.draw_landmarks(image, results.face_landmarks, mp_holistic.FACE_CONNECTIONS)
+            gesture = find_gesture(results)
+            canvas = execute_gesture(canvas, gesture)
+            
+            
             mp_drawing.draw_landmarks(image, results.left_hand_landmarks, mp_holistic.HAND_CONNECTIONS)
             mp_drawing.draw_landmarks(image, results.right_hand_landmarks, mp_holistic.HAND_CONNECTIONS)
-            #mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_holistic.POSE_CONNECTIONS)
+            
         
         cv2.imshow('MediaPipe Holistic', image)
         cv2.imshow("Result", canvas)
