@@ -9,8 +9,8 @@ def find_sum(list_points,k, axis):
 def add_coordinates(list_points, hand_landmarks):
     
     point = []
-    point.append(int(hand_landmarks.landmark[8].x*800))
-    point.append(int(hand_landmarks.landmark[8].y*800))
+    point.append(int(hand_landmarks.landmark[8].x*256))
+    point.append(int(hand_landmarks.landmark[8].y*256))
     point.append(int(hand_landmarks.landmark[8].z*512))
     
     list_points.append(point)
@@ -52,3 +52,27 @@ def find_distance(index, thumb):
     distance = math.sqrt(distance)
     distance = distance*800
     return distance
+
+def get_coordinates(hand_landmarks):
+    x = int(hand_landmarks.landmark[8].x*800)
+    y = int(hand_landmarks.landmark[8].y*800)
+    z = int(hand_landmarks.landmark[8].z*256)
+    return x,y,z
+
+def valid(i,j,canvas):
+    if i < 0:
+        return False
+    if i >= canvas.shape[0]:
+        return False
+    if j < 0:
+        return False
+    if j >= canvas.shape[1]:
+        return False
+    return True
+
+def draw_on_point(x,y,z,canvas,threshold):
+    for i in range(x-threshold,x+threshold):
+        for j in range(y -threshold,y+threshold):
+            if(valid(i,j,canvas)):
+                canvas[j][i] = 255
+    return canvas
