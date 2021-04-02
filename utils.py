@@ -47,11 +47,14 @@ def draw_circle(cursor, list_avg, radius, color,thickness):
     cv2.circle(cursor,end_point,radius,color,thickness)
     
     return cursor
-def find_distance(index, thumb):
-    distance = (index.x - thumb.x)**2+ (index.y - thumb.y)**2
-    distance = math.sqrt(distance)
-    distance = distance*800
-    return distance
+def find_distance(right_hand_landmarks, thumb):
+    all_distance = []
+    for i in range(8,21,4):
+        distance = (right_hand_landmarks[i].x - thumb.x)**2+ (right_hand_landmarks[i].y - thumb.y)**2
+        distance = math.sqrt(distance)
+        distance = distance*800
+        all_distance.append(distance)
+    return all_distance
 
 def get_coordinates(hand_landmarks):
     x = int(hand_landmarks.landmark[8].x*800)

@@ -10,9 +10,9 @@ def init():
     count = 0
 
     list_points = []
-    list_avg = []
+    #list_avg = []
 
-    return count, list_points, list_avg
+    return count, list_points
 def distance_to_gesture(distance):
     if(distance < 50):
         gesture = 1
@@ -22,9 +22,8 @@ def distance_to_gesture(distance):
 
 def find_gesture(results):
     if results.right_hand_landmarks:
-        index = results.right_hand_landmarks.landmark[8]
         thumb  = results.right_hand_landmarks.landmark[4]
-        distance = find_distance(index, thumb)
+        distance = find_distance(results.right_hand_landmarks, thumb)
         gesture = distance_to_gesture(distance)
     else:
         gesture = -1
@@ -42,7 +41,7 @@ canvas = np.zeros([512,512,1],dtype=np.uint8)
 
 def draw(canvas, color, k, threshold, thickness):
     cap = cv2.VideoCapture(0)
-    count, list_points, list_avg = init()
+    count, list_points = init()
 
     while cap.isOpened():
         success, image = cap.read()
@@ -61,21 +60,21 @@ def draw(canvas, color, k, threshold, thickness):
 
         if results.left_hand_landmarks:
 
-            count = count+1
+            #count = count+1
             hand_landmarks = results.left_hand_landmarks
             
             list_points = add_coordinates(list_points, hand_landmarks)
 
-            if(count == k):
-                avg_x, avg_y, avg_z = find_average(list_points, k)
-                list_avg = add_to_average_list(list_avg,avg_x,avg_y,avg_z)
+            # if(count == k):
+            #     avg_x, avg_y, avg_z = find_average(list_points, k)
+            #     list_avg = add_to_average_list(list_avg,avg_x,avg_y,avg_z)
 
-                count = 0
+            #     count = 0
 
-                if(len(list_avg) > threshold):
-                    
-                    canvas = draw_line(canvas,list_avg,color,thickness)
-            
+            if(len(list_points) > threshold):
+                
+                canvas = draw_line(canvas,list_points,color,thickness)
+        
             gesture = find_gesture(results)
             canvas = execute_gesture(canvas, gesture)
             
@@ -92,4 +91,4 @@ def draw(canvas, color, k, threshold, thickness):
     cv2.destroyAllWindows()
     cap.release()
 
-draw(canvas, color = (255,0,0), k =5, threshold = 4, thickness = 2)
+draw(canvas, color = (255,0,0), k =5, threshold = 1, thickness = 1)
